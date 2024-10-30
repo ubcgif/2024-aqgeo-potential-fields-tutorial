@@ -1,0 +1,114 @@
+/* -------------------- */
+/* Dracula extra colors */
+/* -------------------- */
+:root {
+  --r-dracula-cyan: #8BE9FD;
+  --r-dracula-green: #50FA7B;
+  --r-dracula-orange: #FFB86C;
+  --r-dracula-pink: #FF79C6;
+  --r-dracula-purple: #BD93F9;
+  --r-dracula-red: #FF5555;
+  --r-dracula-yellow: #F1FA8C;
+}
+
+/* ------- */
+/* Columns */
+/* ------- */
+
+.container {
+    display: flex;
+    flex-direction: row;
+}
+
+.col-1 {
+    flex: 1;
+}
+.col-2 {
+    flex: 2;
+}
+.col-2 {
+    flex: 3;
+}
+
+/* -------------- */
+/* General format */
+/* -------------- */
+
+.align-left {
+    text-align: left;
+}
+
+.text-sm {
+  font-size: calc(0.85 * var(--r-main-font-size));
+}
+
+.text-xs {
+  font-size: calc(0.75 * var(--r-main-font-size));
+}
+
+.text-xxs {
+  font-size: calc(0.5 * var(--r-main-font-size));
+}
+
+code.noscroll {
+    max-height: none !important;
+}
+
+
+/* ----- */
+/* Boxes */
+/* ----- */
+
+.box-cyan {
+    padding: 0.5em 0.5em;
+    background: var(--r-dracula-cyan);
+    color: var(--r-background-color);
+}
+.box-green {
+    padding: 0.5em 0.5em;
+    background: var(--r-dracula-green);
+    color: var(--r-background-color);
+}
+.box-orange {
+    padding: 0.5em 0.5em;
+    background: var(--r-dracula-orange);
+    color: var(--r-background-color);
+}
+.box-pink {
+    padding: 0.5em 0.5em;
+    background: var(--r-dracula-pink);
+    color: var(--r-background-color);
+}
+.box-purple {
+    padding: 0.5em 0.5em;
+    background: var(--r-dracula-purple);
+    color: var(--r-background-color);
+}
+.box-red {
+    padding: 0.5em 0.5em;
+    background: var(--r-dracula-red);
+    color: var(--r-background-color);
+}
+.box-yellow {
+    padding: 0.5em 0.5em;
+    background: var(--r-dracula-yellow);
+    color: var(--r-background-color);
+}
+
+.box-cyan strong,
+.box-green strong,
+.box-orange strong,
+.box-pink strong,
+.box-purple strong,
+.box-red strong,
+.box-yellow strong {
+    color: var(--r-background-color);
+}
+
+
+/* -------- */
+/* Override */
+/* -------- */
+.reveal pre {
+    width: 100%;
+}

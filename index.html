@@ -20,10 +20,11 @@
     <link rel="stylesheet" href="reveal.js/dist/theme/dracula.css" id="theme" />
 
     <!-- Load theme for highlighting code -->
-    <link rel="stylesheet" href="reveal.js/plugin/highlight/monokai.css" />
+    <!-- <link rel="stylesheet" href="reveal.js/plugin/highlight/monokai.css" /> -->
+    <link rel="stylesheet" href="css/highlightjs-catpuccin/catppuccin-macchiato.css" />
 
     <!-- Custom CSS for the presentation -->
-    <!-- <link rel="stylesheet/less" type="text/css" href="css/style.less" /> -->
+    <link rel="stylesheet" href="css/style.css" />
   </head>
 
   <body>
@@ -102,7 +103,7 @@
         // number for the current slide. The function should take in a slide
         // object and return an array with one string [slideNumber] or
         // three strings [n1,delimiter,n2]. See #formatSlideNumber().
-        slideNumber: "",
+        slideNumber: true,
         // Add the current slide number to the URL hash so that reloading the
         // page/copying the URL will return you to the same slide
         hash: true,
