@@ -418,6 +418,8 @@ def evaluate_kernel(coordinates, prism, kernel):
 
 ### Gravity fields: simple implementation
 
+<div class="text-sm">
+
 Finally, define a function to compute the gravity acceleration of the prism:
 
 ```python
@@ -432,7 +434,16 @@ Now we can use this function to compute the vertical acceleration due to the
 prism on the observation point:
 
 ```python
+# Define the prism
+prism = [-10.0, 10.0, -12.0, 12.0, -15.0, -5.0]
+
+# Define the density contrast for the prism
 density = 200.0 # kg/m3
+
+# Define the coordinates of the observation point
+coordinates = (0.0, 0.0, 2.0)
+
+# Compute the vertical acceleration
 gz = gravity_z(coordinates, prism, density)
 print(f"{gz} m/s2")
 ```
@@ -444,6 +455,8 @@ print(f"{gz} m/s2")
 <div class="box-purple">
 
 The result is negative because this is the **upward** acceleration component.
+
+</div>
 
 </div>
 
@@ -875,11 +888,12 @@ $$
   * Prism faces
 * **$\mathbf{B}$ field** is **defined** everywhere **outside** the prism, but:
   * The **non-diagonal $u_{\alpha\beta}$** are _not defined_ on lines along edges.
-  * **Limits** approaching to the **faces** from _outside_ vs from _inside_.
+  * **Limits** approaching to the **faces** from _outside_ vs from _inside_ are
+    not equal.
 * Evaluating **$\ln$**  functions on small values lead to **numerical
   instabilities**.
 
-<div class="box-purple" style="margin-top: 1em;">
+<div class="box-purple" style="width: 70%; margin: 1em auto;">
 
 For the purpose of today, we'll leave this here.
 
@@ -896,10 +910,51 @@ For the purpose of today, we'll leave this here.
 
 ---
 
+<!-- .slide: class="center" -->
+
+## Efficient implementation
+
+---
+
+## Efficient implementation
+
+So far we **implemented** functions to compute the **gravity field of prisms**:
+
+```python
+G = 6.6743e-11  # gravitational constant
+
+def kernel_z(x, y, z):
+    ...
+
+def evaluate_kernel(coordinates, prism, kernel):
+    ...
+
+def gravity_z(coordinates, prism, density):
+    u_z = evaluate_kernel(coordinates, prism, kernel_z)
+    return G * density * u_z
+```
+
+To compute the effect of several _prisms_ on several _observation points_, we
+would need to use `for` loops.
+
+Because Python for loops are slow, **this implementation is not efficient**.
+
+---
+
+## Writing fast Python code
+
+> Use Numba instead
+
+---
+
 ## Choclo
 
 > Introduce the package, the need for it. Combining efforts from SimPEG and
 > Fatiando to build tools that are used by the two projects.
+
+---
+
+<img class="r-stretch" src="images/choclo-docs.png" alt="">
 
 ---
 
