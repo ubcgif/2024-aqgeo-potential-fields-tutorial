@@ -432,13 +432,13 @@ Now we can use this function to compute the vertical acceleration due to the
 prism on the observation point:
 
 ```python
-density = 2900.0 # kg/m3
+density = 200.0 # kg/m3
 gz = gravity_z(coordinates, prism, density)
 print(f"{gz} m/s2")
 ```
 
 ```bash
--3.820956349021657e-06 m/s2
+-2.635142309670108e-07 m/s2
 ```
 
 <div class="box-purple">
@@ -451,75 +451,9 @@ The result is negative because this is the **upward** acceleration component.
 
 ### Gravity fields: simple implementation
 
-Let's modify the `gravity_z` function to handle multiple observation points:
-
-<pre>
-<code
-data-trim
-data-noescape
-data-line-numbers
-class="python hljs noscroll"
->
-def gravity_z(coordinates, prism, density):
-    easting, northing, upward = coordinates
-    # Initialize an array of results
-    result = np.empty(easting.size)
-    # Iterate over the observation points
-    for i in range(easting.size):
-        # Evaluate the kernel for the current observation point
-        u_z = evaluate_kernel(
-          (easting[i], northing[i], upward[i]), prism, kernel_z
-        )
-        # Add result to the array
-        result[i] = G * density * u_z
-    return result
-</code>
-</pre>
-
----
-
-### Gravity fields: simple implementation
-
 Use it to compute $g_z$ on a grid of observation points:
 
-<div class="container">
-
-<div class="col-1">
-
-<pre>
-<code
-data-trim
-data-noescape
-data-line-numbers="|1-4|6-7|9-14|16-17|"
-class="python hljs noscroll"
->
-# Build grid of observation points
-easting = np.linspace(-30.0, 30.0, 121)
-northing = np.linspace(-30.0, 30.0, 121)
-easting, northing = np.meshgrid(easting, northing)
-
-# All points are at constant height
-upward = 2.0 * np.ones_like(easting)
-
-# Put the coordinates inside a new variable
-coordinates = (
-  easting.ravel(),
-  northing.ravel(),
-  upward.ravel()
-)
-
-# Compute gz
-gz = gravity_z(coordinates, prism, density)
-</code>
-</pre>
-
-</div>
-
-<div class="col-1">
-<img src="images/gz-single-prism.png" alt="" style="width: 100%">
-</div>
-
-</div>
+<img class="r-stretch" src="images/gz-single-prism.png" alt="" style="width: 100%">
 
 ---
 
@@ -693,10 +627,11 @@ In code:
 
 ```python
 x1, x2 = -70, -50
-delta_y = 1e-6
+y = 1e-6
+z = 0
 
-r1 = np.sqrt(x1**2 + delta_y**2)
-r2 = np.sqrt(x2**2 + delta_y**2)
+r1 = np.sqrt(x1**2 + y**2 + z**2)
+r2 = np.sqrt(x2**2 + y**2 + z**2)
 print(f"{r1=}")
 print(f"{r2=}")
 ```
@@ -705,13 +640,16 @@ r1=70.0
 r2=50.00000000000001
 ```
 
-So `r2 != x1`, but `r1 == x1`
+So `r2 != -x2`, but `r1 == -x1`
 
 <div class="box-purple">
 
 We fall under machine precision when computing **`r1`**.
 
 </div>
+
+</div>
+<div class="col-1 text-sm">
 
 We defined the `safe_log` function as follows:
 
@@ -731,8 +669,6 @@ def safe_log(x, r):
 </code>
 </pre>
 
-</div>
-<div class="col-1 text-sm">
 
 Evaluating `safe_log` on these two points:
 1. will return **0.0**
@@ -767,7 +703,6 @@ def safe_log(x, y, z, r):
 </div>
 
 ---
-
 
 <!-- .slide: class="center" -->
 
@@ -930,11 +865,34 @@ $$
 
 ---
 
-## Software implementations
+## Analytic solutions: magnetic fields
 
-> Talk about some details of the implementation.
-> Numerical accuracy.
-> Limits. Singular points.
+**Second-order kernels** also contain nuances:
+
+* **$\mathbf{B}$ field** is **not defined** on:
+  * Prism vertices
+  * Prism edges
+  * Prism faces
+* **$\mathbf{B}$ field** is **defined** everywhere **outside** the prism, but:
+  * The **non-diagonal $u_{\alpha\beta}$** are _not defined_ on lines along edges.
+  * **Limits** approaching to the **faces** from _outside_ vs from _inside_.
+* Evaluating **$\ln$**  functions on small values lead to **numerical
+  instabilities**.
+
+<div class="box-purple" style="margin-top: 1em;">
+
+For the purpose of today, we'll leave this here.
+
+</div>
+
+---
+
+<!-- .slide: data-visibility="hidden" -->
+
+## Analytic solutions: TMI
+
+> Should we add some slides explaining how to get forward model TMI?
+> Should we add some slides about assuming induced magnetization only?
 
 ---
 

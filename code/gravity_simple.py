@@ -47,7 +47,7 @@ west, east = -10.0, 10.0
 south, north = -12.0, 12.0
 bottom, top = -15.0, -5.0
 prism = [west, east, south, north, bottom, top]
-density = 2900
+density = 200
 
 gz = gravity_z(coordinates, prism, density)
 print(f"{gz} m/s2")
@@ -86,5 +86,5 @@ plt.xlabel("easting [m]")
 plt.ylabel("northing [m]")
 plt.colorbar(label="m/s2")
 plt.title("$g_z$ due to single prism")
-plt.savefig("images/gz-single-prism.png")
+plt.savefig("images/gz-single-prism.png", dpi=600)
 plt.show()
