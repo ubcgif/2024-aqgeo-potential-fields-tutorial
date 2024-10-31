@@ -20,6 +20,10 @@
     flex-direction: row;
 }
 
+.gap {
+    gap: 30px;
+}
+
 .col-1 {
     flex: 1;
 }
@@ -104,6 +108,15 @@ code.noscroll {
 .box-yellow strong {
     color: var(--r-background-color);
 }
+.box-cyan code,
+.box-green code,
+.box-orange code,
+.box-pink code,
+.box-purple code,
+.box-red code,
+.box-yellow code {
+    color: var(--r-background-color);
+}
 
 
 /* -------- */
@@ -111,4 +124,8 @@ code.noscroll {
 /* -------- */
 .reveal pre {
     width: 100%;
+}
+
+ol, ul {
+    margin-bottom: var(--r-block-margin) !important;
 }

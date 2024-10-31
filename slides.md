@@ -98,6 +98,12 @@ Image
 
 ---
 
+<!-- .slide: class="center" -->
+
+## Analytic solutions: gravity fields
+
+---
+
 ## Analytic solutions: gravity fields
 
 <!--
@@ -547,7 +553,7 @@ $$
 $u_z$ is not defined when for any of the vertices:
 1. $r=0$ _(prism vertices)_,
 1. $z=0$ and $x \ne 0$ or $y \ne 0$ _(planes of horizontal faces)_,
-<!-- 1. $x=-r$ or $y=-r$. -->
+1. $x=-r$ or $y=-r$ _(lines along horizontal edges)_.
 
 In such cases, we need to **evaluate the limits of $u_z$** approaching those
 points.
@@ -577,6 +583,11 @@ $$
 x \ln(y + r) = 0
 $$
 
+$$
+\lim\limits_{(x, z) \to (0, 0)} \\,
+x \ln(y + \sqrt{x^2 + y^2 + z^2}) = 0
+$$
+
 </div>
 <div class="col-1">
 
@@ -593,7 +604,7 @@ $$
 
 <div class="box-purple">
 
-We need to evaluate this **limits** in our **implementation**.
+We need to evaluate these **limits** in our **implementation**.
 </div>
 
 ---
@@ -606,6 +617,8 @@ One possible solution: define custom functions for the **$\ln$** and
 ```python
 def safe_log(x, r):
     if r == 0.0:
+      return 0.0
+    if x == -r:
       return 0.0
     return np.log(x + r)
 
@@ -631,16 +644,289 @@ def kernel_z(x, y, z):
 
 ---
 
-<!-- .slide: class="center" -->
+## Numerical instabilities
+
+<div class="container">
+
+<div class="col-1 text-sm">
+
+Let's consider the case in which the observation point is _almost_ in one of
+the lines along the horizontal edges.
+
+The **shifted coordinates** of the **two vertices** in that line are going to
+be:
+
+$$
+v_1 = (x_1, \delta y, 0)
+\newline
+v_2 = (x_2, \delta y, 0)
+$$
+
+where $x_1 < x_2 < 0$ and **$\delta y \ll 1$**.
+
+The distance from observation point to each vertex:
+
+$$
+r_1 = \sqrt{x_1^2 + \delta y^2}
+\newline
+r_2 = \sqrt{x_2^2 + \delta y^2 }
+$$
+
+</div>
+<div class="col-1 text-sm">
+
+> Image of prism with observation point?
+
+</div>
+
+</div>
+
+---
 
 ## Numerical instabilities
+
+<div class="container gap">
+
+<div class="col-1 text-sm">
+
+In code:
+
+```python
+x1, x2 = -70, -50
+delta_y = 1e-6
+
+r1 = np.sqrt(x1**2 + delta_y**2)
+r2 = np.sqrt(x2**2 + delta_y**2)
+print(f"{r1=}")
+print(f"{r2=}")
+```
+```bash
+r1=70.0
+r2=50.00000000000001
+```
+
+So `r2 != x1`, but `r1 == x1`
+
+<div class="box-purple">
+
+We fall under machine precision when computing **`r1`**.
+
+</div>
+
+We defined the `safe_log` function as follows:
+
+<pre>
+<code
+data-trim
+data-noescape
+data-line-numbers="|4-5|6|"
+class="python hljs noscroll"
+>
+def safe_log(x, r):
+    if r == 0.0:
+      return 0.0
+    if x == -r:
+      return 0.0
+    return np.log(x + r)
+</code>
+</pre>
+
+</div>
+<div class="col-1 text-sm">
+
+Evaluating `safe_log` on these two points:
+1. will return **0.0**
+2. will return the `np.log(x2 + r2)`
+
+<div class="box-orange" style="margin-bottom: 1em;">
+
+Will lead to **invalid evaluation** of the fields.
+
+</div>
+
+
+### We can fix it!
+
+<pre>
+<code
+data-trim
+data-noescape
+data-line-numbers="|1,4-5|"
+class="python hljs noscroll"
+>
+def safe_log(x, y, z, r):
+    if r == 0.0:
+      return 0.0
+    if y == 0.0 and z == 0.0:
+      return 0.0
+    return np.log(x + r)
+</code>
+</pre>
+
+</div>
+</div>
 
 ---
 
 
+<!-- .slide: class="center" -->
+
 ## Analytic solutions: magnetic fields
 
+---
+
+## Analytic solutions: magnetic fields
+
+<!--
 > Analytic solution to the magnetic field components.
+-->
+
+<div class="text-sm">
+
+Magnetic field:
+
+$$
+\mathbf{B}(\mathbf{p}) =
+    -\frac{\mu_0}{4\pi}
+    \nabla_\mathbf{p}
+    \int\limits_\Gamma
+    \mathbf{M}
+    \cdot
+    \nabla_\mathbf{q}
+    \left(
+        \frac{1}{|\mathbf{p} - \mathbf{q}|}
+    \right)
+    \text{d}\mathbf{q}
+$$
+
+$$
+\mathbf{B}(\mathbf{p}) =
+    \frac{\mu_0}{4\pi}
+    \nabla_\mathbf{p}
+    \int\limits_{x_1}^{x_2}
+    \int\limits_{y_1}^{y_2}
+    \int\limits_{z_1}^{z_2}
+    \mathbf{M}
+    \cdot
+    \nabla_\mathbf{p}
+    \left(
+        \frac{1}{|\mathbf{p} - \mathbf{q}|}
+    \right)
+    \text{d}\mathbf{q}
+$$
+
+One component:
+
+$$
+B_x(\mathbf{p}) =
+\frac{\mu_0}{4\pi}
+\sum\limits_{i \in \\{x, y, z\\}}
+M_i
+\\,
+\underbrace{
+\frac{\partial^2}{\partial x \partial i}
+\int\limits_{x_1}^{x_2}
+\int\limits_{y_1}^{y_2}
+\int\limits_{z_1}^{z_2}
+    \frac{1}{|\mathbf{p} - \mathbf{q}|}
+\text{d}\mathbf{q}
+}_{\text{derivatives of } u(\mathbf{p})}
+$$
+
+$$
+B_x(\mathbf{p}) =
+\frac{\mu_0}{4\pi}
+\sum\limits_{i \in \\{x, y, z\\}}
+M_i u_{xi}(\mathbf{p})
+$$
+
+</div>
+
+---
+
+## Analytic solutions: magnetic fields
+
+<div class="container text-sm">
+
+<div class="col-1">
+
+We can write these expressions as a **dot product** between a **matrix** and
+the **magnetization vector**:
+
+$$
+\mathbf{B}(\mathbf{p}) =
+\frac{\mu_0}{4\pi}
+\\,
+\mathbf{U}(\mathbf{p})
+\cdot
+\mathbf{M}
+$$
+
+$$
+\mathbf{B}(\mathbf{p}) =
+\frac{\mu_0}{4\pi}
+\\,
+\begin{bmatrix}
+    u_{xx}(\mathbf{p}) & u_{xy}(\mathbf{p}) & u_{xz}(\mathbf{p}) \newline
+    u_{xy}(\mathbf{p}) & u_{yy}(\mathbf{p}) & u_{yz}(\mathbf{p}) \newline
+    u_{xz}(\mathbf{p}) & u_{yz}(\mathbf{p}) & u_{zz}(\mathbf{p})
+\end{bmatrix}
+\cdot
+\begin{bmatrix}
+    M_x \newline
+    M_y \newline
+    M_z
+\end{bmatrix}
+$$
+
+The **$u_{\alpha\beta}(\mathbf{p})$** are the **second derivatives** of the
+**$u(\mathbf{p})$**:
+
+$$
+u_{\alpha\beta}(\mathbf{p}) =
+\frac{\partial^2 u(\mathbf{p})}{\partial \alpha \\, \partial \beta},
+\quad
+\alpha, \beta \in \\{x, y, z\\}
+$$
+
+They have **analytic solutions**:
+
+$$
+u_{\alpha\beta}(\mathbf{p}) =
+\Bigl\lvert
+\Bigl\lvert
+\Bigl\lvert
+k_{\alpha\beta}(x, y, z)
+\Bigl\rvert_{x_1}^{x_2}
+\Bigl\rvert_{y_1}^{y_2}
+\Bigl\rvert_{z_1}^{z_2}
+$$
+
+</div>
+<div class="col-1">
+
+**Second-order kernels:**
+
+$$
+\begin{align*}
+k_{xx}(\mathbf{p}) &= -\arctan\left( \frac{yz}{xr} \right)
+\newline
+k_{yy}(\mathbf{p}) &= -\arctan\left( \frac{xz}{yr} \right)
+\newline
+k_{zz}(\mathbf{p}) &= -\arctan\left( \frac{xy}{zr} \right)
+\newline
+k_{xy}(\mathbf{p}) &= \ln(z + r)
+\newline
+k_{xz}(\mathbf{p}) &= \ln(y + r)
+\newline
+k_{yz}(\mathbf{p}) &= \ln(x + r)
+\newline
+\end{align*}
+$$
+
+</div>
+
+</div>
 
 ---
 
@@ -652,6 +938,17 @@ def kernel_z(x, y, z):
 
 ---
 
-## Examples
+## Choclo
 
-$$ E = mc^2 $$
+> Introduce the package, the need for it. Combining efforts from SimPEG and
+> Fatiando to build tools that are used by the two projects.
+
+---
+
+## Forward modelling on regular meshes
+
+> How we actually forward model potential fields in SimPEG meshes.
+
+---
+
+## Thank you
