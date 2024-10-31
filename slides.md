@@ -88,7 +88,7 @@ Image
 > points in the survey.
 -->
 
-> Image of a mesh
+<img class="r-stretch" src="images/mesh.png" alt="">
 
 * Discretize the subsurface using **regular meshes** with **rectangular cells**.
 * Each cell: **homogeneous physical property**.
@@ -98,102 +98,31 @@ Image
 
 ---
 
-<!-- .slide: data-visibility="hidden" -->
-
-## Analytic solutions for rectangular prisms
-
-<!--
-> Show a prism with its boundaries.
-> Show integral equations.
-> Switch to shifted coordinates (coordinate system located on the observation
-> point).
---->
-
-<div class="container">
-<div class="col-1">
-
-Coordinate system located on $\mathbf{p}$:
-
-$$
-\begin{cases}
-x = x_q - x_p \newline
-y = y_q - y_p \newline
-z = z_q - z_p
-\end{cases}
-$$
-
-* Gravity potential:
-  $$
-  V(\mathbf{p}) =
-    G\rho
-    \int_{x_1}^{x_2}
-    \int_{y_1}^{y_2}
-    \int_{z_1}^{z_2}
-      \frac{
-        \text{d}x \\,
-        \text{d}y \\,
-        \text{d}z
-      }{
-        \sqrt{x^2 + y^2 + z^2}
-      }
-  $$
-* Magnetic field:
-  $$
-  \mathbf{B}(\mathbf{p}) =
-    \frac{\mu_0}{4\pi}
-    \nabla_\mathbf{p}
-    \int_{x_1}^{x_2}
-    \int_{y_1}^{y_2}
-    \int_{z_1}^{z_2}
-    \mathbf{M}
-    \cdot
-    \nabla_\mathbf{p}
-    \left(
-        \frac{1}{\sqrt{x^2 + y^2 + z^2}}
-    \right)
-    \text{d}x \\,
-    \text{d}y \\,
-    \text{d}z
-  $$
-
-</div>
-<div class="col-1">
-
-Image of the prism and the observation point
-
-</div>
-</div>
-
----
-
 ## Analytic solutions: gravity fields
 
+<!--
 > Analytic solution to the gravity potential and acceleration components.
 > Move the coordinate system to the next slide
+-->
 
 <div class="container">
 <div class="col-1">
 
 * Gravity potential:
   $$
-  V(\mathbf{p}) =
+  \begin{align*}
+  V(\mathbf{p}) &=
     G \int\limits_\Gamma
         \frac{\rho}{|\mathbf{p} - \mathbf{q}|}
     \text{d}\mathbf{q}
-  $$
-  $$
-  V(\mathbf{p}) =
-    G\rho
-    \int_{x_1}^{x_2}
-    \int_{y_1}^{y_2}
-    \int_{z_1}^{z_2}
-      \frac{
-        \text{d}x \\,
-        \text{d}y \\,
-        \text{d}z
-      }{
-        \sqrt{x^2 + y^2 + z^2}
-      }
+    \newline
+    & = G\rho
+    \int\limits_{x_1}^{x_2}
+    \int\limits_{y_1}^{y_2}
+    \int\limits_{z_1}^{z_2}
+      \frac{ 1 }{ |\mathbf{p} - \mathbf{q}| }
+      \text{d}\mathbf{q}
+  \end{align*}
   $$
 * Gravity acceleration:
   $$ \mathbf{g}(\mathbf{p}) = \nabla_\mathbf{p} V(\mathbf{p}) $$
@@ -204,20 +133,9 @@ Image of the prism and the observation point
   $$
 
 </div>
-
 <div class="col-1">
 
-Coordinate system located on $\mathbf{p}$:
-
-$$
-\begin{cases}
-x = x_q - x_p \newline
-y = y_q - y_p \newline
-z = z_q - z_p
-\end{cases}
-$$
-
-image of the prism and the observation point
+<img src="images/prism.png" alt="" style="width: 70%;">
 
 </div>
 </div>
@@ -237,12 +155,6 @@ Solve the gravity potential, then derive the acceleration components.
 
 <div class="container">
 <div class="col-1 align-left text-sm">
-
-<div style="padding-top: 200px; padding-bottom: 200px; border-style: solid;">
-
-Image of the prism and the observation points
-
-</div>
 
 Coordinate system located on $\mathbf{p}$:
 
@@ -276,15 +188,29 @@ V(\mathbf{p}) =
     }
 $$
 
-</div>
-<div class="col-1 align-left text-sm">
-
 Define $u(\mathbf{p})$ as:
 $$
 V(\mathbf{p}) = G\rho \\, u(\mathbf{p})
 $$
 
-Then:
+
+</div>
+<div class="col-1">
+
+<img src="images/prism.png" alt="">
+
+</div>
+
+</div>
+
+---
+
+## Analytic solutions: gravity fields
+
+<div class="align-left text-sm">
+
+The $u(\mathbf{p})$ is given by:
+
 $$
 u(\mathbf{p}) =
   \int_{x_1}^{x_2}
@@ -323,9 +249,12 @@ k(x, y, z) = \\, & x y \ln(z + r)
     \newline
     &- \frac{x^2}{2} \arctan \left( \frac{y z}{x r} \right)
     - \frac{y^2}{2} \arctan \left( \frac{x z}{y r} \right)
-    - \frac{z^2}{2} \arctan \left( \frac{x y}{z r} \right)
-    \newline
+    - \frac{z^2}{2} \arctan \left( \frac{x y}{z r} \right),
 \end{align*}
+$$
+
+$$
+r = \sqrt{x^2 + y^2 + z^2}.
 $$
 
 <div class="box-purple" style="text-align: center;">
@@ -334,7 +263,6 @@ We refer to $k(x, y, z)$ as a **kernel** function.
 
 </div>
 
-</div>
 </div>
 
 ---
@@ -397,6 +325,12 @@ $$
 
 </div>
 </div>
+
+---
+
+<!-- .slide: class="center" -->
+
+## Gravity fields: <br> simple implementation
 
 ---
 
@@ -581,7 +515,125 @@ gz = gravity_z(coordinates, prism, density)
 
 </div>
 
+---
 
+<!-- .slide: class="center" -->
+
+## Issues of this implementation
+
+---
+
+## Singular points
+
+The gravitational potential $V$ and the acceleration $\mathbf{g}$ are defined
+in every point of space.
+
+But the **solutions $u(x, y, z)$ are not**.
+
+$$
+g_z(\mathbf{p}) = G\rho \\, u_z(\mathbf{p}),
+\quad
+u_z(\mathbf{p}) =
+\Bigl\lvert \Bigl\lvert \Bigl\lvert
+k_z(x, y, z)
+\Bigl\rvert_{x_1}^{x_2} \Bigl\rvert_{y_1}^{y_2} \Bigl\rvert_{z_1}^{z_2}
+$$
+
+$$
+k_z(x, y, z) =
+-\left[ x \ln(y + r) + y \ln(x + r) - z \arctan \left( \frac{x y}{z r}\right) \right]
+$$
+
+$u_z$ is not defined when for any of the vertices:
+1. $r=0$ _(prism vertices)_,
+1. $z=0$ and $x \ne 0$ or $y \ne 0$ _(planes of horizontal faces)_,
+<!-- 1. $x=-r$ or $y=-r$. -->
+
+In such cases, we need to **evaluate the limits of $u_z$** approaching those
+points.
+
+---
+
+## Singular points
+
+For the potential $V$ and the acceleration $\mathbf{g}$, all singular terms
+have **finite limits** equal **to zero**.
+
+$$
+\lim\limits_{(x_p, y_p, z_p) \to (x_1, y_1, z_1)} u_z(\mathbf{p}) =
+\lim\limits_{(x_p, y_p, z_p) \to (x_1, y_1, z_1)} \\, \\,
+\Bigl\lvert \Bigl\lvert \Bigl\lvert
+k_z(x, y, z)
+\Bigl\rvert_{x_1}^{x_2} \Bigl\rvert_{y_1}^{y_2} \Bigl\rvert_{z_1}^{z_2}
+$$
+
+<div class="container">
+<div class="col-1">
+
+One of the singular **$\ln$** terms:
+
+$$
+\lim\limits_{(x, y, z) \to (0, 0, 0)} \\,
+x \ln(y + r) = 0
+$$
+
+</div>
+<div class="col-1">
+
+One of the singular **$\arctan$** terms:
+
+$$
+\lim\limits_{(x, y, z) \to (0, 0, 0)} \\,
+z \arctan \left( \frac{xy}{zr} \right) = 0
+$$
+
+</div>
+</div>
+
+
+<div class="box-purple">
+
+We need to evaluate this **limits** in our **implementation**.
+</div>
+
+---
+
+## Singular points: limits in implementation
+
+One possible solution: define custom functions for the **$\ln$** and
+**$\arctan$**:
+
+```python
+def safe_log(x, r):
+    if r == 0.0:
+      return 0.0
+    return np.log(x + r)
+
+def safe_arctan(num, den):
+    if den == 0.0:
+        return 0.0
+    return np.arctan(num / den)
+```
+
+Use these instead of `np.log` and `np.arctan` in our implementation of the
+**kernel function**:
+
+```python
+def kernel_z(x, y, z):
+    r = np.sqrt(x**2 + y**2 + z**2)
+    result = -(
+        x * safe_log(y, r)
+        + y * safe_log(x, r)
+        - z * safe_arctan(x * y , z * r)
+    )
+    return result
+```
+
+---
+
+<!-- .slide: class="center" -->
+
+## Numerical instabilities
 
 ---
 
