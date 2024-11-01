@@ -11,9 +11,9 @@
   --r-dracula-yellow: #F1FA8C;
 }
 
-/* ------- */
-/* Columns */
-/* ------- */
+/* ------------------- */
+/* Columns and flexbox */
+/* ------------------- */
 
 .container {
     display: flex;
@@ -32,6 +32,30 @@
 }
 .col-2 {
     flex: 3;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.flex-row {
+    flex-direction: row;
+}
+
+.flex-column {
+    flex-direction: column;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.justify-evenly {
+    justify-content: space-evenly;
+}
+
+.align-center {
+    align-items: center;
 }
 
 /* -------------- */
@@ -56,6 +80,15 @@
 
 code.noscroll {
     max-height: none !important;
+}
+
+.table {
+    margin: 1em 0;
+}
+
+.list li {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
 }
 
 

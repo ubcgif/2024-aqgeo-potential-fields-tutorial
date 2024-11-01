@@ -20,11 +20,70 @@ November 7, 2024
 
 ---
 
+<!-- .slide: class="center" -->
+
 ## Motivation
 
+<!--
 > Maybe add a motivation slide, showing that we usually measure data above the
 > earth surface, we remove the normal earth and the igrf field, so we can get the
 > signal of bodies with anomalous densities or magnetized bodies.
+-->
+
+<div class="container">
+
+<div class="list d-flex justify-center align-center flex-column">
+
+* **Magnetic data** is the most available geophysical data.
+* **Gravity data** is usually available.
+* Higher **data quality** requires _accurate forward modelling_.
+* Higher **computation power** allows us to work on _larger problems_:
+    * Larger **areas**.
+    * Data with **higher resolution**.
+* Inversion of **gravity** and **magnetic** data are the most common.
+    * _Efficient code_ helps to reduce the required computational power.
+    * Saves _time_ and _energy_.
+
+</div>
+<div style="width: 40%;">
+
+<img src="images/australia-grav.png" alt="" >
+
+</div>
+
+</div>
+
+---
+
+<!-- .slide: class="center" -->
+
+## Motivation
+
+<div class="list">
+
+* **3D gravity** and **magnetic** forward modelling codes available _since the 90s_.
+* In order to get code that is:
+  * Accurate,
+  * Efficient,
+  * Easy to use,
+  * Easy to extend,
+  * Easy to parallelize and distribute.
+
+</div>
+
+<div class="box-orange" style="width: 50%; margin: auto auto;">
+We need to get into the details of the method.
+</div>
+
+---
+
+<!-- .slide: class="center" -->
+
+## Recap on gravity and magnetic fields
+
+---
+
+## Gravity and magnetic data
 
 ---
 
@@ -80,7 +139,7 @@ $$
 
 ---
 
-## Analytic solutions for rectangular prisms
+## Discretize the subsurface: Regular meshes
 
 <!--
 > We usually discretize the subsurface using regular meshes. In SimPEG we use
@@ -798,7 +857,9 @@ def safe_log(x, y, z, r):
 > Analytic solution to the magnetic field components.
 -->
 
-<div class="text-sm">
+<div class="container text-sm">
+
+<div class="col-1">
 
 Magnetic field:
 
@@ -856,6 +917,13 @@ B_x(\mathbf{p}) =
 \sum\limits_{i \in \\{x, y, z\\}}
 M_i u_{xi}(\mathbf{p})
 $$
+
+</div>
+<div class="col-1">
+
+<img src="images/prism-magnetization.png" alt="" style="width: 70%;">
+
+</div>
 
 </div>
 
@@ -1012,24 +1080,423 @@ Because Python for loops are slow, **this implementation is not efficient**.
 
 ## Writing fast Python code
 
-> Use Numba instead
+**Numba** allows to write code that gets **compiled at runtime** (_JIT: Just
+in-time compilation_).
+<br>
+Leads to **fast executions**.
+
+<div class="container gap text-sm">
+<div class="col-1 fragment">
+
+**Slow** matrix-vector dot product:
+
+```python
+def dot_product_slow(matrix, x):
+    nrows, ncols = matrix.shape
+    result = np.zeros(nrows, dtype=np.float64)
+    for i in range(nrows):
+        for j in range(ncols):
+            result[i] += matrix[i][j] * x[j]
+    return result
+```
+
+<div class="fragment">
+
+**Numba** implementation:
+
+<pre>
+<code
+data-trim
+data-noescape
+data-line-numbers="|3|"
+class="python hljs noscroll"
+>
+import numba
+
+@numba.jit(nopython=True)
+def dot_product(matrix, x):
+    nrows, ncols = matrix.shape
+    result = np.zeros(nrows, dtype=np.float64)
+    for i in range(nrows):
+        for j in range(ncols):
+            result[i] += matrix[i][j] * x[j]
+    return result
+</code>
+</pre>
+
+</div> <!-- fragment -->
+
+</div>
+<div class="col-1 fragment">
+
+Let's benchmark them:
+
+```python
+import numpy as np
+
+size = 300
+rng = np.random.default_rng(seed=42)
+a = rng.random(size=(size, size))
+x = rng.random(size=size)
+```
+
+Benchmark slow implementation:
+```python
+%timeit dot_product_slow(a, x)
+```
+```bash
+39.4 ms ± 1.1 ms per loop
+```
+
+Benchmark Numba implementation:
+```python
+%timeit dot_product(a, x)
+```
+```bash
+94 μs ± 1.72 μs per loop
+```
+
+<div class="box-purple">
+
+~400 times faster!
+
+</div>
+
+</div>
+</div>
 
 ---
 
 ## Choclo
 
-> Introduce the package, the need for it. Combining efforts from SimPEG and
-> Fatiando to build tools that are used by the two projects.
+<img class="r-stretch" src="images/choclo-docs.png" alt="">
 
 ---
 
-<img class="r-stretch" src="images/choclo-docs.png" alt="">
+<!-- .slide: class="center" -->
+
+## Choclo
+
+<div class="align-left" style="width: 70%; margin: 0 auto;">
+
+Includes:
+
+* **Gravity** and **magnetic** **forward** modelling functions.
+* For **point masses**, **dipoles** and **rectangular prisms**.
+* All functions are **Numba-based**.
+* Compute the fields for **single source** and **single observation point**.
+* Also offers **kernel functions**.
+
+</div>
+
+---
+
+<!-- .slide: class="center" -->
+
+## Choclo
+
+<div class="container">
+<div>
+<img src="images/choclo-screen-1.png" alt="" style="width: 100%">
+</div>
+<div>
+<img src="images/choclo-screen-2.png" alt="" style="width: 100%">
+</div>
+<div>
+<img src="images/choclo-screen-3.png" alt="" style="width: 100%">
+</div>
+</div>
+
+---
+
+<!-- .slide: class="center" -->
+
+<img src="images/choclo.png" alt="" style="width: 50%;">
+<div class="container" style="align-items: center; justify-content: center;">
+<div class="col-1">
+<img src="images/simpeg.png" alt="" style="width: 70%;">
+</div>
+<div class="col-1">
+<img src="images/fatiando-banner-small-dark-url.png" alt="">
+</div>
+</div>
+
+
+---
+
+## Using Choclo
+
+Compute the **upward acceleration** due to a **single prism**:
+
+<pre>
+<code
+data-trim
+data-noescape
+data-line-numbers
+class="python hljs noscroll"
+>
+import numpy as np
+from choclo.prism import gravity_u
+
+# Define a single computation point
+easting, northing, upward = 0.0, 0.0, 10.0
+
+# Define the boundaries of the prism as a list
+prism = [-10.0, 10.0, -7.0, 7.0, -15.0, -5.0]
+
+# And its density contrast
+density = 400.0
+
+# Compute the upward component of the grav. acceleration
+g_u = gravity_u(easting, northing, upward, *prism, density)
+print(f"{g_u} m/s2")
+</code>
+</pre>
+
+```bash
+-1.6539652880538094e-07 m/s2
+```
+
+---
+
+## Using Choclo
+
+Compute the **upward acceleration** due to **multiple prism** on **multiple
+observation points**.
+
+<div class="container">
+
+<div class="col-1 text-sm">
+
+<div class="align-left">
+
+We need to:
+* Iterate over the **observation points**.
+* Iterate over the **prisms**.
+
+</div>
+
+> For every **observation point**, compute the gravity effect of
+> **every prism**.
+
+
+</div>
+
+<div class="fragment col-1 text-sm">
+
+<pre>
+<code
+data-trim
+data-noescape
+data-line-numbers="|3|4|5-6|8-9|11-18|12-13|14-20|21|"
+class="python hljs noscroll"
+>
+import numba
+
+@numba.jit(nopython=True, parallel=True)
+def gravity_upward(coordinates, prisms, densities):
+    # Unpack coordinates of the observation points
+    easting, northing, upward = coordinates[:]
+
+    # Initialize a result array full of zeros
+    result = np.zeros_like(easting, dtype=np.float64)
+
+    # Forward every prism for each observation point
+    for i in numba.prange(len(easting)):
+        for j in range(prisms.shape[0]):
+            result[i] += gravity_u(
+                easting[i], northing[i], upward[i],
+                prisms[j, 0], prisms[j, 1],
+                prisms[j, 2], prisms[j, 3],
+                prisms[j, 4], prisms[j, 5],
+                densities[j],
+            )
+    return result
+</code>
+</pre>
+
+</div>
+
+</div>
+
+---
+
+<!-- .slide: class="center" -->
+
+## Forward modelling on regular meshes
 
 ---
 
 ## Forward modelling on regular meshes
 
-> How we actually forward model potential fields in SimPEG meshes.
+In SimPEG we need to forward model the gravity and magnetic effect of <br>
+**regular meshes** with **rectangular prism cells**.
+
+<img class="r-stretch" src="images/mesh.png" alt="">
+
+---
+
+## Forward modelling on regular meshes
+
+<div class="container">
+
+<div class="col-1 text-sm">
+
+One way: iterate over each **observation point** and each **cell**.
+
+```python
+# in pseudo-code
+for p in range(observation_points):
+    for c in range(mesh.n_cells):
+        results[p] += forward(
+            observation_point[p], mesh.cell_bounds[c], model[c]
+        )
+```
+
+We will evaluate each **kernel function** on **each node** of each cell.
+
+<br>
+
+<div class="fragment">
+
+But since _neighbouring cells share 4 nodes_, we'll evaluate the _kernels_
+repeatedly on each node.
+
+</div>
+
+<br>
+
+<div class="fragment">
+
+Kernels evaluations are expensive due to `np.log` and `np.arctan`.
+
+</div>
+
+<br>
+
+<div class="fragment box-purple">
+
+Iterating over cells is **not efficient**.
+
+</div>
+
+</div>
+
+<div class="col-1">
+
+<img src="images/mesh-shared-nodes.png" alt="" style="width: 70%;">
+
+</div>
+
+</div>
+
+---
+
+<div class="container justify-evenly align-center">
+
+## Forward modelling on regular meshes
+
+<img src="images/jcapriot.jpeg" alt="" style="height: 150px; border-radius: 50%; border-style: solid;">
+
+</div>
+
+<div class="container text-sm">
+<div class="col-1">
+
+### A better approach
+
+1. Evaluate the **kernel functions** on **every node** in the mesh.
+1. For _each cell_:
+    * Gather the **kernel values** for _its nodes_.
+    * _Add_ and _subtract_ the **kernel values** for that cell.
+
+<pre>
+<code
+data-trim
+data-noescape
+data-line-numbers="|2|4-5|7-11|13-15|"
+class="python hljs noscroll"
+>
+# in pseudo-code
+for p in range(observation_points):
+
+    # Initialize array for kernel values on each node
+    kernel_values = np.zeros(mesh.nodes.size)
+
+    # Iterate over the nodes
+    for n, node in enumerate(mesh.nodes):
+        kernel_values[n] = kernel(
+            observation_point[p], node
+        )
+
+    # Iterate over the cells
+    for c, cell in enumerate(mesh.cell):
+      results[p] += model[c] * add_effect(cell, kernel_values)
+</code>
+</pre>
+
+</div>
+<div class="col-1">
+
+<img src="images/mesh-all-nodes.png" alt="" style="width: 60%; margin-top: 2em;">
+
+</div>
+</div>
+
+---
+
+<div class="container justify-evenly align-center">
+
+## Forward modelling on regular meshes
+
+<img src="images/jcapriot.jpeg" alt="" style="height: 150px; border-radius: 50%; border-style: solid;">
+
+</div>
+
+<div class="container text-sm">
+<div class="col-1">
+
+### A better approach
+
+For example, if we have a 3D `TensorMesh` of <br>
+`50 x 50 x 50` cells:
+
+<!-- |                | Number of nodes | -->
+<!-- | -------------- | --------------- | -->
+<!-- | Total nodes    | 132,651         | -->
+<!-- | Boundary nodes | 15,002          | -->
+<!-- | Internal nodes | 117,649         | -->
+
+<div class="table">
+
+|                 | Total nodes | Boundary | Internal |
+| --------------- | ----------- | -------- | -------- |
+| Number of nodes | 132,651     | 15,002   | 117,649  |
+
+</div>
+
+Each _internal node_ is shared by **8 cells**.
+
+<div class="table">
+
+|                    | Iterate over cells | Iterate over nodes |
+| ------------------ | ------------------ | ------------------ |
+| Kernel evaluations | 956,194            | 132,651            |
+
+</div>
+<div class="box-purple">
+
+We need to perform **~8 times** less kernel evaluations.
+
+</div>
+
+</div>
+<div class="col-1">
+
+<img src="images/mesh.png" alt="" style="width: 80%; margin-top: 2em;">
+
+</div>
+</div>
 
 ---
 

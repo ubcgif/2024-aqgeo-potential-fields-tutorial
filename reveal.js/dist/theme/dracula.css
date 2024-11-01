@@ -367,7 +367,7 @@ section.has-light-background, section.has-light-background h1, section.has-light
 :root {
   --r-bold-color: #FFB86C;
   --r-italic-color: #F1FA8C;
-  --r-inline-code-color: #50FA7B;
+  --r-inline-code-color: #FF5555;
   --r-list-bullet-color: #8BE9FD;
 }
 
