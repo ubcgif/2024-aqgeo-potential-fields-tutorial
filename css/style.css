@@ -66,6 +66,14 @@
     text-align: left;
 }
 
+.text-xl {
+  font-size: calc(1.5 * var(--r-main-font-size));
+}
+
+.text-lg {
+  font-size: calc(1.2 * var(--r-main-font-size));
+}
+
 .text-sm {
   font-size: calc(0.85 * var(--r-main-font-size));
 }
