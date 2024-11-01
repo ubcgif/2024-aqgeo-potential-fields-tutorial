@@ -1,0 +1,19 @@
+name: aqgeo-2024-potential-fields
+channels:
+  - conda-forge
+dependencies:
+  - python
+  - pip
+  # For slides
+  - livereload
+  # IPython and Jupyter
+  - ipython
+  - jupyter
+  - nbdime # git diffs for notebooks
+  - nbqa
+  - jupytext
+  # Packages
+  - numpy==1.23
+  - simpeg==0.22.2
+  - choclo==0.3.0
+  - matplotlib
