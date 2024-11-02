@@ -771,7 +771,7 @@ $$
 
 ## Numerical instabilities
 
-<div class="container gap">
+<div class="container gap r-stretch align-center">
 
 <div class="col-1 text-sm">
 
@@ -842,32 +842,136 @@ Will lead to **invalid evaluation** of the fields.
 </div>
 
 </div> <!-- fragment -->
-<div class="fragment">
 
+</div>
+</div>
+
+
+---
+
+## Numerical instabilities
 
 ### We can fix it!
 
-<pre>
+<pre
+style="width: 60%;"
+>
 <code
 data-trim
 data-noescape
-data-line-numbers="|1,4-5|"
+data-line-numbers="|1,4-5"
 class="python hljs noscroll"
 >
 def safe_log(x, y, z, r):
     if r == 0.0:
       return 0.0
-    if y == 0.0 and z == 0.0:
+    if x < 0 and y == 0.0 and z == 0.0:
       return 0.0
     return np.log(x + r)
 </code>
 </pre>
 
-</div> <!-- fragment -->
+<div class="box-purple" style="width: 60%; margin: auto auto;">
+
+Regardless of how small `y` and `z` are with respect to `x`, this function
+**will not** `return 0.0` if the observation point is **not in the line of the
+edges**.
+
+---
+
+<!-- .slide: class="center" -->
+
+## Numerical instabilities
+
+<div class="container text-sm align-center">
+
+<div class="col-50">
+
+### Evaluating $\ln$ on small values
+
+If _$x < 0$_ and _$|x| \gg |y|, |z|$_, issues evaluating _$\ln(x + r)$_:
+
+* The `x + r` addition could fall under _machine precision_.
+* `x + r` will be a _small number_: **errors** get greatly **amplified** by the
+  _$\ln$_.
+
+<div class="box-red">
+
+**Numerical instabilities** that will produce **inaccurate fields**.
+
+</div>
+
+</div>
+<div class="col-50">
+
+<img src="images/log_small_values_issue.png" alt="">
 
 </div>
 </div>
 
+---
+
+<!-- .slide: class="center" -->
+
+## Numerical instabilities
+
+<div class="container text-sm">
+
+<div class="col-50">
+
+### A solution
+
+When _$x<0$_, _Fukushima (2020)_ proposes to replace the _$\ln(x + r)$_ for
+a better expression.
+
+$$
+\ln(x + r) =
+\ln \left( \frac{r^2 - x^2}{r - x} \right)
+$$
+
+Since:
+
+$$
+r^2 = x^2 + y^2 + z^2
+$$
+
+We can express it as:
+
+$$
+\ln(x + r) =
+\ln \left( \frac{y^2 + z^2}{r - x} \right)
+$$
+
+</div>
+
+<div class="col-50">
+
+Modify the `safe_log` function:
+
+<pre>
+<code
+data-trim
+data-noescape
+data-line-numbers="|4-8|5-6|7-8"
+class="python hljs noscroll"
+>
+def safe_log(x, y, z, r):
+    if r == 0.0:
+      return 0.0
+    if x < 0:
+      if y == 0.0 and z == 0.0:
+        return 0.0
+      else:
+        return np.log((y**2 + z**2) / (r - x))
+    return np.log(x + r)
+</code>
+</pre>
+
+<img class="fragment" src="images/log_small_values_fixed.png" alt="" style="width: 70%;">
+
+</div>
+
+</div>
 
 ---
 
@@ -1053,8 +1157,6 @@ $$
   * The **non-diagonal $u_{\alpha\beta}$** are _not defined_ on lines along edges.
   * **Limits** approaching to the **faces** from _outside_ vs from _inside_ are
     not equal.
-* Evaluating **$\ln$**  functions on small values lead to **numerical
-  instabilities**.
 
 <div class="box-purple" style="width: 70%; margin: 1em auto;">
 
