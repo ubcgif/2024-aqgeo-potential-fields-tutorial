@@ -1630,4 +1630,10 @@ We need to perform **~8 times** less kernel evaluations.
 
 <!-- .slide: class="center" -->
 
+## Demo: Forward modelling and inversion
+
+---
+
+<!-- .slide: class="center" -->
+
 ## Thank you
