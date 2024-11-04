@@ -59,7 +59,7 @@ def plot_model(mesh, density, slice_loc_z=-500, bounds=None):
 
 
 def plot_block(
-    block_bounds, axes, facecolor="none", edgecolor="C0", linewidth=3, **kwargs
+    block_bounds, axes, facecolor="none", edgecolor="C2", linewidth=3, **kwargs
 ):
     """
     Plot the bounds of the synthetic block in the three slice axes.
