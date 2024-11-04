@@ -797,7 +797,8 @@ r2=50.00000000000001
 </div> <!-- fragment -->
 <div class="fragment">
 
-So `r2 != -x2`, but `r1 == -x1`
+So <code style="color: var(--r-dracula-green);">r2 != -x2</code>,
+but <code style="color: var(--r-dracula-red);">r1 == -x1</code>.
 
 </div> <!-- fragment -->
 
@@ -904,7 +905,7 @@ If _$x < 0$_ and _$|x| \gg |y|, |z|$_, issues evaluating _$\ln(x + r)$_:
 </div>
 <div class="col-50">
 
-<img src="images/log_small_values_issue.png" alt="">
+<img src="images/numerical-instabilities-issue.png" alt="">
 
 </div>
 </div>
@@ -967,7 +968,7 @@ def safe_log(x, y, z, r):
 </code>
 </pre>
 
-<img class="fragment" src="images/log_small_values_fixed.png" alt="" style="width: 70%;">
+<img class="fragment" src="images/numerical-instabilities-fixed.png" alt="" style="width: 70%;">
 
 </div>
 
@@ -1164,6 +1165,8 @@ For the purpose of today, we'll leave this here.
 
 </div>
 
+_More details in [fatiando.org/choclo](https://fatiando.org/choclo)._
+
 ---
 
 <!-- .slide: data-visibility="hidden" -->
@@ -1299,6 +1302,13 @@ Benchmark Numba implementation:
 
 <img class="r-stretch" src="images/choclo-docs.png" alt="">
 
+<div class="text-xs">
+
+[www.fatiando.org/choclo](https://www.fatiando.org)
+
+</div>
+
+
 ---
 
 <!-- .slide: class="center" -->
@@ -1429,7 +1439,7 @@ def gravity_upward(coordinates, prisms, densities):
     # Initialize a result array full of zeros
     result = np.zeros_like(easting, dtype=np.float64)
 
-    # Forward every prism for each observation point
+    # On each observation point, forward each prism
     for i in numba.prange(len(easting)):
         for j in range(prisms.shape[0]):
             result[i] += gravity_u(
