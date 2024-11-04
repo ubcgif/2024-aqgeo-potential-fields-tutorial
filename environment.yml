@@ -2,7 +2,7 @@ name: aqgeo-2024-potential-fields
 channels:
   - conda-forge
 dependencies:
-  - python
+  - python==3.12.*
   - pip
   # For slides
   - livereload
@@ -13,8 +13,8 @@ dependencies:
   - nbqa
   - jupytext
   # Packages
-  - numpy==1.23
-  - simpeg==0.22.2
+  - numpy==2.*.*
+  - simpeg==0.23.0
   - choclo==0.3.0
   - pandas==2.2.*
   - matplotlib
