@@ -1,0 +1,4 @@
+.ipynb_checkpoints
+notebooks/gravity.csv
+notebooks/sparse-models
+__pycache__
