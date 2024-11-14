@@ -9,6 +9,7 @@ dependencies:
   # IPython and Jupyter
   - ipython
   - jupyter
+  - jupyterlab
   - nbdime # git diffs for notebooks
   - nbqa
   - jupytext
