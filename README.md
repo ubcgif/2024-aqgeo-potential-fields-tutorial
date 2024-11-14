@@ -101,7 +101,7 @@ The code under the `notebooks` folder is provided under the [MIT
 License](notebooks/LICENSE).
 
 [slides]: https://ubcgif.github.io/2024-aqgeo-potential-fields-tutorial
-[slides-pdf]: N/A
+[slides-pdf]: https://github.com/ubcgif/2024-aqgeo-potential-fields-tutorial/releases/latest/download/2024-aqgeo-potential-fields.pdf
 [anaconda]: https://anaconda.org
 [miniconda]: https://docs.anaconda.com/miniconda/miniconda-install
 [miniforge]: https://github.com/conda-forge/miniforge
